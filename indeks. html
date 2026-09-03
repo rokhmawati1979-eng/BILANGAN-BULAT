@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drill Aritmetika Bilangan Bulat</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap');
+        body { font-family: 'Fredoka', sans-serif; }
+        .shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+    </style>
+</head>
+<body class="bg-indigo-900 text-white min-h-screen flex items-center justify-center p-4">
+
+    <!-- Container Utama -->
+    <div class="bg-indigo-800 border-4 border-indigo-500 rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl relative overflow-hidden">
+        
+        <!-- HALAMAN AWAL -->
+        <div id="start-screen" class="text-center space-y-6">
+            <div class="inline-block p-4 bg-indigo-600 rounded-full mb-2 border-2 border-indigo-400 shadow-inner">
+                <i class="fa-solid fa-calculator text-5xl text-yellow-300"></i>
+            </div>
+            <h1 class="text-3xl font-extrabold tracking-wide text-yellow-400">DRILL ARITMETIKA</h1>
+            <p class="text-indigo-200 text-sm">Latihan cepat operasi bilangan bulat (positif & negatif)!</p>
+            
+            <div class="space-y-4 text-left bg-indigo-950/50 p-4 rounded-2xl border border-indigo-700">
+                <label class="block text-xs font-bold text-indigo-300 uppercase tracking-wider">Tingkat Kesulitan</label>
+                <div class="grid grid-cols-3 gap-2">
+                    <button type="button" onclick="selectDifficulty('easy')" id="btn-easy" class="diff-btn py-2 text-xs font-bold rounded-xl border-2 border-indigo-600 bg-indigo-700 hover:bg-indigo-600">Mudah<br><span class="text-[10px] opacity-75">±10</span></button>
+                    <button type="button" onclick="selectDifficulty('medium')" id="btn-medium" class="diff-btn py-2 text-xs font-bold rounded-xl border-2 border-yellow-500 bg-yellow-600">Sedang<br><span class="text-[10px] opacity-75">±25</span></button>
+                    <button type="button" onclick="selectDifficulty('hard')" id="btn-hard" class="diff-btn py-2 text-xs font-bold rounded-xl border-2 border-indigo-600 bg-indigo-700 hover:bg-indigo-600">Sulit<br><span class="text-[10px] opacity-75">±50</span></button>
+                </div>
+            </div>
+
+            <button onclick="startGame()" class="w-full py-4 bg-yellow-400 hover:bg-yellow-300 text-indigo-950 font-extrabold rounded-2xl text-xl shadow-lg transition flex items-center justify-center gap-2">
+                <i class="fa-solid fa-play"></i> MULAI GAME
+            </button>
+        </div>
+
+        <!-- HALAMAN GAME -->
+        <div id="game-screen" class="hidden space-y-6">
+            <div class="flex justify-between items-center bg-indigo-950/60 p-3 rounded-2xl border border-indigo-700 text-sm">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-trophy text-yellow-400"></i>
+                    <span id="score-display" class="font-bold text-lg">0</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-clock text-red-400"></i>
+                    <span id="timer-display" class="font-bold text-lg text-red-400">60s</span>
+                </div>
+                <div class="flex items-center gap-1 text-xs text-indigo-300">
+                    <span>Streak:</span>
+                    <span id="streak-display" class="font-bold text-yellow-300 text-sm">0🔥</span>
+                </div>
+            </div>
+
+            <div id="problem-card" class="bg-indigo-950/90 rounded-2xl p-6 border-2 border-indigo-600 text-center shadow-inner">
+                <div id="problem-text" class="text-4xl sm:text-5xl font-black tracking-wider text-white my-4">
+                    5 + (-3)
+                </div>
+            </div>
+
+            <div id="options-grid" class="grid grid-cols-2 gap-3">
+                <!-- Pilihan Jawaban Muncul Di Sini -->
+            </div>
+
+            <button onclick="endGame()" class="w-full py-2 bg-indigo-900/50 hover:bg-indigo-900 text-indigo-400 text-xs font-semibold rounded-xl">
+                Hentikan Permainan
+            </button>
+        </div>
+
+        <!-- HALAMAN GAME OVER -->
+        <div id="end-screen" class="hidden text-center space-y-6">
+            <h2 class="text-3xl font-extrabold text-yellow-400">WAKTU HABIS!</h2>
+            
+            <div class="bg-indigo-950/60 p-6 rounded-2xl border border-indigo-700 space-y-3">
+                <p class="text-xs text-indigo-300 uppercase font-bold tracking-widest">Skor Akhir Anda</p>
+                <div id="final-score" class="text-6xl font-black text-white">0</div>
+                <div class="flex justify-around pt-3 border-t border-indigo-800 text-xs text-indigo-200">
+                    <div>Benar: <span id="stats-correct" class="font-bold text-green-400">0</span></div>
+                    <div>Salah: <span id="stats-wrong" class="font-bold text-red-400">0</span></div>
+                    <div>Akurasi: <span id="stats-accuracy" class="font-bold text-yellow-300">0%</span></div>
+                </div>
+            </div>
+
+            <button onclick="startGame()" class="w-full py-4 bg-yellow-400 hover:bg-yellow-300 text-indigo-950 font-extrabold rounded-2xl text-xl shadow-lg transition flex items-center justify-center gap-2">
+                <i class="fa-solid fa-rotate-right"></i> MAIN LAGI
+            </button>
+        </div>
+
+    </div>
+
+    <script>
+        let difficulty = 'medium';
+        let score = 0;
+        let timeLeft = 60;
+        let timerInterval = null;
+        let currentAnswer = 0;
+        let streak = 0;
+        let stats = { correct: 0, wrong: 0 };
+
+        function selectDifficulty(diff) {
+            difficulty = diff;
+            document.querySelectorAll('.diff-btn').forEach(btn => {
+                btn.className = "diff-btn py-2 text-xs font-bold rounded-xl border-2 border-indigo-600 bg-indigo-700 hover:bg-indigo-600";
+            });
+            const selectedBtn = document.getElementById(`btn-${diff}`);
+            selectedBtn.className = "diff-btn py-2 text-xs font-bold rounded-xl border-2 border-yellow-500 bg-yellow-600";
+        }
+
+        function startGame() {
+            score = 0;
+            timeLeft = 60;
+            streak = 0;
+            stats = { correct: 0, wrong: 0 };
+
+            document.getElementById('start-screen').classList.add('hidden');
+            document.getElementById('end-screen').classList.add('hidden');
+            document.getElementById('game-screen').classList.remove('hidden');
+
+            updateStatsDisplay();
+            nextQuestion();
+
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                document.getElementById('timer-display').innerText = `${timeLeft}s`;
+                if (timeLeft <= 0) {
+                    endGame();
+                }
+            }, 1000);
+        }
+
+        function generateNumber(min, max) {
+            let num = 0;
+            while (num === 0) {
+                num = Math.floor(Math.random() * (max - min + 1)) + min;
+            }
+            return num;
+        }
+
+        function nextQuestion() {
+            let range = 10;
+            if (difficulty === 'medium') range = 25;
+            if (difficulty === 'hard') range = 50;
+
+            const operators = ['+', '-', '×'];
+            const op = operators[Math.floor(Math.random() * operators.length)];
+
+            let num1 = generateNumber(-range, range);
+            let num2 = generateNumber(-range, range);
+
+            let num1Str = num1 < 0 ? `(${num1})` : `${num1}`;
+            let num2Str = num2 < 0 ? `(${num2})` : `${num2}`;
+
+            if (op === '+') currentAnswer = num1 + num2;
+            else if (op === '-') currentAnswer = num1 - num2;
+            else if (op === '×') currentAnswer = num1 * num2;
+
+            document.getElementById('problem-text').innerText = `${num1Str} ${op} ${num2Str}`;
+
+            const options = [currentAnswer];
+            while (options.length < 4) {
+                let offset = generateNumber(-5, 5);
+                let fakeAns = currentAnswer + offset;
+                if (!options.includes(fakeAns)) {
+                    options.push(fakeAns);
+                }
+            }
+
+            options.sort(() => Math.random() - 0.5);
+
+            const grid = document.getElementById('options-grid');
+            grid.innerHTML = '';
+            options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = "py-4 bg-indigo-700 hover:bg-indigo-600 active:bg-indigo-500 border-2 border-indigo-500 rounded-2xl text-2xl font-bold shadow-md transition transform active:scale-95";
+                btn.innerText = opt;
+                btn.onclick = () => checkAnswer(opt, btn);
+                grid.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(selected, btnElement) {
+            const card = document.getElementById('problem-card');
+            
+            if (selected === currentAnswer) {
+                score += 10 + Math.floor(streak / 3) * 2;
+                streak++;
+                stats.correct++;
+                btnElement.classList.add('bg-green-600', 'border-green-400');
+            } else {
+                streak = 0;
+                stats.wrong++;
+                card.classList.add('shake');
+                setTimeout(() => card.classList.remove('shake'), 500);
+                btnElement.classList.add('bg-red-600', 'border-red-400');
+            }
+
+            updateStatsDisplay();
+            
+            const btns = document.querySelectorAll('#options-grid button');
+            btns.forEach(b => b.disabled = true);
+
+            setTimeout(() => {
+                nextQuestion();
+            }, 300);
+        }
+
+        function updateStatsDisplay() {
+            document.getElementById('score-display').innerText = score;
+            document.getElementById('streak-display').innerText = `${streak}🔥`;
+        }
+
+        function endGame() {
+            clearInterval(timerInterval);
+            document.getElementById('game-screen').classList.add('hidden');
+            document.getElementById('end-screen').classList.remove('hidden');
+
+            document.getElementById('final-score').innerText = score;
+            document.getElementById('stats-correct').innerText = stats.correct;
+            document.getElementById('stats-wrong').innerText = stats.wrong;
+            
+            const total = stats.correct + stats.wrong;
+            const accuracy = total > 0 ? Math.round((stats.correct / total) * 100) : 0;
+            document.getElementById('stats-accuracy').innerText = `${accuracy}%`;
+        }
+    </script>
+</body>
+</html>
